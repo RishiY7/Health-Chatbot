@@ -1,25 +1,19 @@
 import streamlit as st
 from transformers import pipeline
-import torch
 
-# Constants
 MODEL_NAME = "distilgpt2"
 MAX_RESPONSE_LENGTH = 200
 DEFAULT_PROMPT = "Ask me a health question..."
 
+@st.cache_resource
+def load_model():
+    """Load the distilgpt2 model using Hugging Face pipeline."""
+    return pipeline("text-generation", model=MODEL_NAME)
+
 class HealthBot:
     def __init__(self):
-        self.model = self.load_model()
+        self.model = load_model()
         self.init_chat_history()
-
-    @st.cache_resource
-    def load_model(self):
-        """Load the distilgpt2 model using Hugging Face pipeline."""
-        try:
-            return pipeline("text-generation", model=MODEL_NAME)
-        except Exception as e:
-            st.error(f"Error loading model: {e}")
-            return None
 
     def init_chat_history(self):
         if "messages" not in st.session_state:
@@ -49,12 +43,10 @@ class HealthBot:
         st.title("🩺 HealthBot Assistant")
         st.markdown("Ask your health-related questions below. 🤖")
 
-        # Display chat history
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
 
-        # Accept user input
         if prompt := st.chat_input(DEFAULT_PROMPT):
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
