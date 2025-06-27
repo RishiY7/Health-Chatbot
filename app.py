@@ -38,7 +38,7 @@ class HealthBot:
             layout="wide",
             page_icon="🩺"
         )
-        st.title("🩺 HealthBot - Q&A Assistant")
+        st.title("🩺 Health Chatbot")
         st.markdown("Ask any health-related question. Note: For educational use only!")
 
         for msg in st.session_state.messages:
