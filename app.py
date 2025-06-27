@@ -1,47 +1,48 @@
 import streamlit as st
 from transformers import pipeline
 
-MODEL_NAME = "distilgpt2"
-MAX_RESPONSE_LENGTH = 200
+# Constants
 DEFAULT_PROMPT = "Ask me a health question..."
 
+# Load QA model (cached to avoid reloading every time)
 @st.cache_resource
-def load_model():
-    """Load the distilgpt2 model using Hugging Face pipeline."""
-    return pipeline("text-generation", model=MODEL_NAME)
+def load_qa_pipeline():
+    return pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
+
+# Sample context (you can expand this or customize it)
+CONTEXT = """
+I am a health assistant designed to give general health guidance.
+Common symptoms like fever, cough, cold, fatigue, and headache may indicate infections or lifestyle issues.
+Maintaining a balanced diet, exercise, hydration, and regular medical checkups is important.
+Always consult a doctor for a real diagnosis or emergency care.
+"""
 
 class HealthBot:
     def __init__(self):
-        self.model = load_model()
+        self.qa_pipeline = load_qa_pipeline()
         self.init_chat_history()
 
     def init_chat_history(self):
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
-    def generate_response(self, prompt: str) -> str:
-        if not prompt.strip():
+    def generate_response(self, question: str) -> str:
+        if not question.strip():
             return "Please enter a valid question."
         try:
-            response = self.model(
-                prompt,
-                max_length=MAX_RESPONSE_LENGTH,
-                do_sample=True,
-                top_k=50,
-                truncation=True
-            )[0]['generated_text']
-            return response.strip()
+            result = self.qa_pipeline(question=question, context=CONTEXT)
+            return result["answer"]
         except Exception as e:
-            return f"Model error: {e}"
+            return f"Error generating answer: {e}"
 
     def run(self):
         st.set_page_config(
-            page_title="🩺 HealthBot",
+            page_title="🩺 HealthBot Q&A",
             layout="wide",
             page_icon="🩺"
         )
-        st.title("🩺 Health Chatbot")
-        st.markdown("Ask your health-related questions below.")
+        st.title("🩺 HealthBot - Ask a Health Question")
+        st.markdown("This bot uses a Q&A model trained on medical texts for educational responses only. ✅")
 
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
@@ -59,7 +60,7 @@ class HealthBot:
 
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Run the app
+# Run the chatbot
 if __name__ == "__main__":
     bot = HealthBot()
     bot.run()
