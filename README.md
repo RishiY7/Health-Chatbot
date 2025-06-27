@@ -2,9 +2,10 @@
 
 HealthBot is an AI chatbot built using Streamlit and Hugging Face Transformers (`distilgpt2`). It allows users to ask health-related questions and receive intelligent responses — no API keys or external backend needed.
 
+## LINK: https://rishiy7-health-chatbot.streamlit.app/
 ---
 
-## ✨ Features
+### ✨ Features
 
 - 🤖 Uses Hugging Face's `distilgpt2` model for natural text generation
 - 💬 Chat-like interface powered by Streamlit
