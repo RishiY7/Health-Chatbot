@@ -4,22 +4,19 @@ from transformers import pipeline
 # Constants
 DEFAULT_PROMPT = "Ask me a health question..."
 
-# Load QA model (cached to avoid reloading every time)
 @st.cache_resource
 def load_qa_pipeline():
     return pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
 
-# Sample context (you can expand this or customize it)
-CONTEXT = """
-I am a health assistant designed to give general health guidance.
-Common symptoms like fever, cough, cold, fatigue, and headache may indicate infections or lifestyle issues.
-Maintaining a balanced diet, exercise, hydration, and regular medical checkups is important.
-Always consult a doctor for a real diagnosis or emergency care.
-"""
+@st.cache_data
+def load_context():
+    with open("context.txt", "r") as f:
+        return f.read()
 
 class HealthBot:
     def __init__(self):
         self.qa_pipeline = load_qa_pipeline()
+        self.context = load_context()
         self.init_chat_history()
 
     def init_chat_history(self):
@@ -30,19 +27,19 @@ class HealthBot:
         if not question.strip():
             return "Please enter a valid question."
         try:
-            result = self.qa_pipeline(question=question, context=CONTEXT)
+            result = self.qa_pipeline(question=question, context=self.context)
             return result["answer"]
         except Exception as e:
             return f"Error generating answer: {e}"
 
     def run(self):
         st.set_page_config(
-            page_title="🩺 HealthBot Q&A",
+            page_title="🩺 HealthBot",
             layout="wide",
             page_icon="🩺"
         )
-        st.title("🩺 HealthBot - Ask a Health Question")
-        st.markdown("This bot uses a Q&A model trained on medical texts for educational responses only. ✅")
+        st.title("🩺 HealthBot - Q&A Assistant")
+        st.markdown("Ask any health-related question. Note: For educational use only!")
 
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
@@ -60,7 +57,6 @@ class HealthBot:
 
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Run the chatbot
 if __name__ == "__main__":
     bot = HealthBot()
     bot.run()
