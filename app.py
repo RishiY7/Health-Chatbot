@@ -40,8 +40,8 @@ class HealthBot:
             layout="wide",
             page_icon="🩺"
         )
-        st.title("🩺 HealthBot Assistant")
-        st.markdown("Ask your health-related questions below. 🤖")
+        st.title("🩺 Health Chatbot")
+        st.markdown("Ask your health-related questions below.")
 
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
