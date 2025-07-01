@@ -1,17 +1,40 @@
-# 🩺 HealthBot – AI-Powered Health Assistant
+# 🩺 HealthBot – AI-Powered Health Assistant (Q&A Style)
 
-HealthBot is an AI chatbot built using Streamlit and Hugging Face Transformers (`distilgpt2`). It allows users to ask health-related questions and receive intelligent responses — no API keys or external backend needed.
+**HealthBot** is a simple health chatbot built using Streamlit and Hugging Face Transformers. It allows users to ask health-related questions and receive accurate answers based on a custom knowledge base (`context.txt`). No API key, no cloud backend, no setup hassle.
 
-## LINK: https://rishiy7-health-chatbot.streamlit.app/
+## 🌐 Live App  
+👉 [Click here to use HealthBot](https://rishiy7-health-chatbot.streamlit.app/)
+
 ---
 
 ### ✨ Features
 
-- 🤖 Uses Hugging Face's `distilgpt2` model for natural text generation
-- 💬 Chat-like interface powered by Streamlit
-- ⚡ Fast & lightweight — runs on CPU, no GPU required
-- ✅ Works locally and deploys easily to **Streamlit Cloud**
-- 🔐 No API key, login, or internet model hosting required
+- 🧠 Uses Hugging Face's `question-answering` pipeline (no API needed)
+- 📄 Powered by a custom `context.txt` with 15+ real-world health Q&A pairs
+- 💬 Chat-style interface built with Streamlit
+- 🚀 Fast and lightweight — runs on CPU, no GPU required
+- 🌐 Easy to deploy on **Streamlit Cloud**
+- 🔐 No login, API key, or internet model hosting required
+
+---
+
+### 📁 Files in This Project
+
+| File | Description |
+|------|-------------|
+| `app.py` | Main Streamlit chatbot interface |
+| `context.txt` | Health knowledge base (Q&A style) |
+| `requirements.txt` | Required Python libraries |
+
+---
+
+### ▶️ How to Run Locally
+
+```bash
+git clone https://github.com/RishiY7/Health-Chatbot
+cd Health-Chatbot
+pip install -r requirements.txt
+streamlit run app.py
 
 
 
