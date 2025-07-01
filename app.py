@@ -1,62 +1,54 @@
+# app.py
+
+# HealthBot - Simple Health Chat App using Transformers and Streamlit
+# Created by Rishi Yadav for educational/demo purposes
+
 import streamlit as st
 from transformers import pipeline
 
-# Constants
-DEFAULT_PROMPT = "Ask me a health question..."
+# Load the context file (this contains all the health info)
+with open("context.txt", "r", encoding="utf-8") as f:
+    context = f.read()
 
-@st.cache_resource
-def load_qa_pipeline():
-    return pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
+# Load a pretrained QA model from Hugging Face
+qa_pipeline = pipeline("question-answering")
 
-@st.cache_data
-def load_context():
-    with open("context.txt", "r") as f:
-        return f.read()
+# Streamlit page setup
+st.set_page_config(page_title="🩺 Health-Chatbot", layout="wide")
+st.title("🩺 Health Chatbot")
+st.markdown("Ask any health-related question and get instant guidance!")
 
-class HealthBot:
-    def __init__(self):
-        self.qa_pipeline = load_qa_pipeline()
-        self.context = load_context()
-        self.init_chat_history()
+# Store conversation history
+if "chat" not in st.session_state:
+    st.session_state.chat = []
 
-    def init_chat_history(self):
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
+# Display chat history
+for msg in st.session_state.chat:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
 
-    def generate_response(self, question: str) -> str:
-        if not question.strip():
-            return "Please enter a valid question."
+# Take user input
+user_question = st.chat_input("Enter your health question...")
+
+if user_question:
+    # Show user's question
+    st.session_state.chat.append({"role": "user", "content": user_question})
+    with st.chat_message("user"):
+        st.write(user_question)
+
+    # Generate model answer from context
+    with st.spinner("Thinking..."):
         try:
-            result = self.qa_pipeline(question=question, context=self.context)
-            return result["answer"]
+            result = qa_pipeline({
+                "question": user_question,
+                "context": context
+            })
+            answer = result["answer"]
         except Exception as e:
-            return f"Error generating answer: {e}"
+            answer = "Sorry, I couldn't find an answer. Try rephrasing your question."
 
-    def run(self):
-        st.set_page_config(
-            page_title="🩺 HealthBot",
-            layout="wide",
-            page_icon="🩺"
-        )
-        st.title("🩺 Health Chatbot")
-        st.markdown("Ask any health-related question. Note: For educational use only!")
+    # Show assistant's answer
+    with st.chat_message("assistant"):
+        st.write(answer)
 
-        for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                st.write(msg["content"])
-
-        if prompt := st.chat_input(DEFAULT_PROMPT):
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                st.write(prompt)
-
-            with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
-                    response = self.generate_response(prompt)
-                st.write(response)
-
-            st.session_state.messages.append({"role": "assistant", "content": response})
-
-if __name__ == "__main__":
-    bot = HealthBot()
-    bot.run()
+    st.session_state.chat.append({"role": "assistant", "content": answer})
