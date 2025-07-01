@@ -1,6 +1,6 @@
-# 🩺 HealthBot – AI-Powered Health Assistant (Q&A Style)
+# 🩺 Health Chatbot – AI-Powered Health Assistant (Q&A Style)
 
-**HealthBot** is a simple health chatbot built using Streamlit and Hugging Face Transformers. It allows users to ask health-related questions and receive accurate answers based on a custom knowledge base (`context.txt`). No API key, no cloud backend, no setup hassle.
+**Health Chatbot** is a simple chatbot built using Streamlit and Hugging Face Transformers. It allows users to ask health-related questions and receive accurate answers based on a custom knowledge base (`context.txt`). No API key, no cloud backend, no setup hassle.
 
 ## 🌐 Live App  
 👉 [Click here to use HealthBot](https://rishiy7-health-chatbot.streamlit.app/)
